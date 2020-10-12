@@ -1,23 +1,26 @@
 import React from "react";
 import "./App.css";
-import Page1 from './Components/Page1';
-import Page2 from './Components/Page2';
-import Page3 from './Components/Page3';
+import Page1 from "./Components/Page1";
 
 class App extends React.Component {
   state = {
-    route: "page1",
+    route: "Page1",
+    component: "",
   };
   onRouteChange = (route) => {
-    this.setState({ route: route });
+    // DYNAMIC IMPORT : FEATURE OF ES2020
+    // import returns a Promise thus file is fetch Asynchronously
+    import(`./Components/${route}.js`)
+      .then((module) => {
+        this.setState({ component: module.default, route });
+      })
+      .catch((error) => console.error(error));
   };
   render() {
-    if (this.state.route === "page1") {
+    if (this.state.route === "Page1") {
       return <Page1 onRouteChange={this.onRouteChange} />;
-    } else if (this.state.route === "page2") {
-      return <Page2 onRouteChange={this.onRouteChange} />;
     } else {
-      return <Page3 onRouteChange={this.onRouteChange} />;
+      return <this.state.component onRouteChange={this.onRouteChange} />;
     }
   }
 }
